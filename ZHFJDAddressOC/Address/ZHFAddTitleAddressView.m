@@ -359,10 +359,12 @@
         }
         if (self.tableViewMarr.count >= 2){
             [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
-            if (self.tableViewMarr.count > 2){
-                [self.titleMarr removeLastObject];
-                [self.tableViewMarr removeLastObject];
-            }
+             NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+            NSInteger count = self.titleMarr.count;
+            NSInteger loc = index + 1;
+            NSInteger range = count - index;
+            [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+            [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
         }
         else{
             UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
@@ -492,11 +494,13 @@
 //        }
 //        if (self.tableViewMarr.count >= 2){
 //            [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
-//            if (self.tableViewMarr.count > 2){
-//                [self.titleMarr removeLastObject];
-//                [self.tableViewMarr removeLastObject];
-//            }
-//        }
+//             NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+//             NSInteger count = self.titleMarr.count;
+//             NSInteger loc = index + 1;
+//             NSInteger range = count - index;
+//             [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//             [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//         }
 //        else{
 //            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
 //            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
