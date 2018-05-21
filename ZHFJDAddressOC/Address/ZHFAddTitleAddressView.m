@@ -28,6 +28,7 @@
 #import "ProvinceModel.h"
 #import "CityModel.h"
 #import "CountyModel.h"
+#import "TownModel.h"
 #import <YYModel/YYModel.h>
 #import "HttpRequest.h"
 //设备物理尺寸
@@ -42,9 +43,11 @@
 @property(nonatomic,strong)NSMutableArray *titleIDMarr;
 @property(nonatomic,assign)BOOL isInitalize;
 @property(nonatomic,assign)BOOL isclick; //判断是滚动还是点击
-@property(nonatomic,strong)NSMutableArray *provinceMarr;
-@property(nonatomic,strong)NSMutableArray *cityMarr;
-@property(nonatomic,strong)NSMutableArray *countyMarr;
+@property(nonatomic,strong)NSMutableArray *provinceMarr;//省
+@property(nonatomic,strong)NSMutableArray *cityMarr;//市
+@property(nonatomic,strong)NSMutableArray *countyMarr;//县
+@property(nonatomic,strong)NSMutableArray *townMarr;//乡
+@property(nonatomic,strong)NSArray *resultArr;//本地数组
 @end
 @implementation ZHFAddTitleAddressView
 -(NSMutableArray *)titleBtns
@@ -82,8 +85,20 @@
     }
     return _countyMarr;
 }
-
+-(NSMutableArray *)townMarr
+{
+    if (_townMarr == nil) {
+        _townMarr = [[NSMutableArray alloc]init];
+    }
+    return _townMarr;
+}
 -(UIView *)initAddressView{
+    //初始化本地数据（如果是网络请求请注释掉-----
+    NSString *imagePath = [[NSBundle mainBundle] pathForResource:@"location" ofType:@"txt"];
+    NSString *string = [[NSString alloc] initWithContentsOfFile:imagePath encoding:NSUTF8StringEncoding error:nil];
+    NSData * resData = [[NSData alloc]initWithData:[string dataUsingEncoding:NSUTF8StringEncoding]];
+    _resultArr = [NSJSONSerialization JSONObjectWithData:resData options:NSJSONReadingMutableLeaves error:nil];
+    //------到这里
     self.frame = CGRectMake(0, 0, screen_width, screen_height);
     self.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.4];
     self.hidden = YES;
@@ -246,6 +261,9 @@
     else if (tableView.tag == 2){
         return self.countyMarr.count;
     }
+    else if (tableView.tag == 3){
+        return self.townMarr.count;
+    }
     else{
         return 0;
     }
@@ -268,16 +286,20 @@
         CountyModel * countyModel  = self.countyMarr[indexPath.row];
         cell.textLabel.text = countyModel.county_name;
     }
+    else if (tableView.tag == 3){
+        TownModel * townModel  = self.townMarr[indexPath.row];
+        cell.textLabel.text = townModel.town_name;
+    }
     cell.textLabel.font = [UIFont systemFontOfSize:13];
     cell.textLabel.textColor = [UIColor grayColor];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (tableView.tag == 0 || tableView.tag == 1){
+    if (tableView.tag == 0 || tableView.tag == 1 || tableView.tag == 2){
         if (tableView.tag == 0){
             ProvinceModel *provinceModel = self.provinceMarr[indexPath.row];
-             NSString * provinceID = [NSString stringWithFormat:@"%ld",provinceModel.id];
+            NSString * provinceID = [NSString stringWithFormat:@"%ld",(long)provinceModel.id];
             //1. 修改选中ID
             if (self.titleIDMarr.count > 0){
                 [self.titleIDMarr replaceObjectAtIndex:tableView.tag withObject:provinceID];
@@ -292,7 +314,7 @@
         }
         else if (tableView.tag == 1){
             CityModel * cityModel = self.cityMarr[indexPath.row];
-             NSString * cityID = [NSString stringWithFormat:@"%ld",cityModel.id];
+            NSString * cityID = [NSString stringWithFormat:@"%ld",(long)cityModel.id];
              [self.titleMarr replaceObjectAtIndex:tableView.tag withObject:cityModel.city_name];
             //1. 修改选中ID
             if (self.titleIDMarr.count > 1){
@@ -304,17 +326,33 @@
             //网络请求，添加县城
             [self getAddressMessageDataAddressID:3 provinceIdOrCityId:cityID];
         }
+        else if (tableView.tag == 2) {
+            CountyModel * countyModel = self.countyMarr[indexPath.row];
+            NSString * countyID = [NSString stringWithFormat:@"%ld",(long)countyModel.id];
+            [self.titleMarr replaceObjectAtIndex:tableView.tag withObject:countyModel.county_name];
+            //1. 修改选中ID
+            if (self.titleIDMarr.count > 2){
+                [self.titleIDMarr replaceObjectAtIndex:tableView.tag withObject:countyID];
+            }
+            else{
+                [self.titleIDMarr addObject:countyID];
+            }
+            //2.修改标题
+            [self.titleMarr replaceObjectAtIndex:tableView.tag withObject:countyModel.county_name];
+            //网络请求，添加县城
+            [self getAddressMessageDataAddressID:4 provinceIdOrCityId:countyID];
+        }
     }
-    else if (tableView.tag == 2) {
-        CountyModel * countyModel = self.countyMarr[indexPath.row];
-        NSString * countyID = [NSString stringWithFormat:@"%ld",countyModel.id];
-        [self.titleMarr replaceObjectAtIndex:tableView.tag withObject:countyModel.county_name];
+    else if (tableView.tag == 3) {
+        TownModel * townModel = self.townMarr[indexPath.row];
+        NSString * townID = [NSString stringWithFormat:@"%ld",(long)townModel.id];
+        [self.titleMarr replaceObjectAtIndex:tableView.tag withObject:townModel.town_name];
         //1. 修改选中ID
-        if (self.titleIDMarr.count > 2){
-             [self.titleIDMarr replaceObjectAtIndex:tableView.tag withObject:countyID];
+        if (self.titleIDMarr.count > 3){
+            [self.titleIDMarr replaceObjectAtIndex:tableView.tag withObject:townID];
         }
         else{
-             [self.titleIDMarr addObject:countyID];
+            [self.titleIDMarr addObject:townID];
         }
         [self setupAllTitle:tableView.tag];
         [self tapBtnAndcancelBtnClick];
@@ -333,103 +371,185 @@
 //本地数据
 -(void)getAddressMessageDataAddressID:(NSInteger)addressID  provinceIdOrCityId: (NSString *)provinceIdOrCityId{
     if (addressID == 1) {
-        [self.provinceMarr removeAllObjects];
-        for (int i = 0; i<64; i++) {
-            NSString * ids = [[NSString alloc]initWithFormat:@"%d",i];
-            NSString * province_name = [[NSString alloc]initWithFormat:@"第%d省",i];
-            NSDictionary * dic1 = @{
-                                    @"id":ids,
-                                    @"province_name":province_name
-                                    };
-            ProvinceModel *provinceModel = [ProvinceModel yy_modelWithDictionary:dic1];
-            [self.provinceMarr addObject:provinceModel];
-        }
+        [self caseProvinceArr:_resultArr];
     }
     else if(addressID == 2){
-        [self.cityMarr removeAllObjects];
-        for (int i = 0; i<30; i++){
-            NSString * ids = [[NSString alloc]initWithFormat:@"%d",i];
-            NSString * city_name = [[NSString alloc]initWithFormat:@"第%d市",i];
-            NSDictionary * dic1 = @{
-                                    @"id":ids,
-                                    @"city_name":city_name
-                                    };
-            CityModel *cityModel =  [CityModel yy_modelWithDictionary:dic1];
-            [self.cityMarr addObject:cityModel];
-        }
-        if (self.tableViewMarr.count >= 2){
-            [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
-             NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
-            NSInteger count = self.titleMarr.count;
-            NSInteger loc = index + 1;
-            NSInteger range = count - index;
-            [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-            [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-        }
-        else{
-            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-            tableView2.tag = 1;
-            [self.tableViewMarr addObject:tableView2];
-            [self.titleMarr addObject:@"请选择"];
-            
-        }
-         [self setupAllTitle:1];
+        [self caseCityArr:_resultArr withSelectedID:provinceIdOrCityId];
     }
     else if(addressID == 3){
-        [self.countyMarr removeAllObjects];
-        for (int i = 0; i<10; i++){
-            NSString * ids = [[NSString alloc]initWithFormat:@"%d",i];
-            NSString * county_name = [[NSString alloc]initWithFormat:@"%d县",i];
-            NSDictionary * dic1 = @{
-                                    @"id":ids,
-                                    @"county_name":county_name
-                                    };
-            CountyModel *countyModel =  [CountyModel yy_modelWithDictionary:dic1];
-            [self.countyMarr addObject:countyModel];
-        }
-        if (self.tableViewMarr.count > 2){
-            [self.titleMarr replaceObjectAtIndex:2 withObject:@"请选择"];
-        }
-        else{
-            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-            tableView2.tag = 2;
-            [self.tableViewMarr addObject:tableView2];
-            [self.titleMarr addObject:@"请选择"];
-        }
-        [self setupAllTitle:2];
+        [self caseCountyArr:_resultArr withSelectedID:provinceIdOrCityId];
+    }
+    else if(addressID == 4){
+        [self caseTownArr:_resultArr withSelectedID:provinceIdOrCityId];
     }
     if (self.tableViewMarr.count >= addressID){
         UITableView* tableView1   = self.tableViewMarr[addressID - 1];
         [tableView1 reloadData];
     }
-    
+}
+-(void)caseProvinceArr:(NSArray *)provinceArr{
+    [self.provinceMarr removeAllObjects];
+    if (provinceArr.count > 0){
+        for (NSDictionary *dic in provinceArr)
+        {
+            if ([dic[@"parentid"] isEqualToString:@"0"]) {
+                NSDictionary * dic1 = @{
+                                        @"id":dic[@"id"],
+                                        @"province_name":dic[@"name"]
+                                        };
+                //
+                ProvinceModel *provinceModel = [ProvinceModel yy_modelWithDictionary:dic1];
+                [self.provinceMarr addObject:provinceModel];
+            }
+        }
+    }
+    else{
+        [self tapBtnAndcancelBtnClick];
+    }
+}
+-(void)caseCityArr:(NSArray *)cityArr withSelectedID:(NSString *)selectedID{
+    [self.cityMarr removeAllObjects];
+    for (NSDictionary *dic in cityArr) {
+        if ([dic[@"parentid"] isEqualToString:selectedID]) {
+            NSDictionary * dic1 = @{
+                                    @"id":dic[@"id"],
+                                    @"city_name":dic[@"name"]
+                                    };
+            CityModel *cityModel = [CityModel yy_modelWithDictionary:dic1];
+            [self.cityMarr addObject:cityModel];
+        }
+    }
+    if (self.tableViewMarr.count >= 2){
+        [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
+        NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+        NSInteger count = self.titleMarr.count;
+        NSInteger loc = index + 1;
+        NSInteger range = count - index;
+        [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+        [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+    }
+    else{
+        UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
+        tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView2.tag = 1;
+        [self.tableViewMarr addObject:tableView2];
+        [self.titleMarr addObject:@"请选择"];
+    }
+    if (self.cityMarr.count > 0) {
+        [self setupAllTitle:1];
+    }
+    else{
+        //没有对应的市
+        if (self.tableViewMarr.count >= 2){
+            [self.titleMarr removeObjectsInRange:NSMakeRange(1, self.titleMarr.count - 2)];
+            [self.tableViewMarr removeObjectsInRange:NSMakeRange(1, self.tableViewMarr.count - 2)];
+        }
+        [self setupAllTitle:0];
+        [self tapBtnAndcancelBtnClick];
+    }
+}
+-(void)caseCountyArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
+    [self.countyMarr removeAllObjects];
+    for (NSDictionary *dic in countyArr) {
+        if ([dic[@"parentid"] isEqualToString:selectedID]) {
+            NSDictionary * dic1 = @{
+                                    @"id":dic[@"id"],
+                                    @"county_name":dic[@"name"]
+                                    };
+            //
+            CountyModel *countyModel =  [CountyModel yy_modelWithDictionary:dic1];
+            [self.countyMarr addObject:countyModel];
+        }
+    }
+    if (self.tableViewMarr.count >= 3){
+        [self.titleMarr replaceObjectAtIndex:2 withObject:@"请选择"];
+        NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+        NSInteger count = self.titleMarr.count;
+        NSInteger loc = index + 1;
+        NSInteger range = count - index;
+        [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+        [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+    }
+    else{
+        UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
+        tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView2.tag = 2;
+        [self.tableViewMarr addObject:tableView2];
+        [self.titleMarr addObject:@"请选择"];
+    }
+    if (self.countyMarr.count > 0){
+        [self setupAllTitle:2];
+    }
+    else{
+        //没有对应的县
+        if (self.tableViewMarr.count >= 3){
+            [self.titleMarr removeObjectsInRange:NSMakeRange(2, self.titleMarr.count - 3)];
+            [self.tableViewMarr removeObjectsInRange:NSMakeRange(2, self.tableViewMarr.count - 3)];
+        }
+        [self setupAllTitle:1];
+        [self tapBtnAndcancelBtnClick];
+    }
+}
+-(void)caseTownArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
+    [self.townMarr removeAllObjects];
+    for (NSDictionary *dic in countyArr) {
+        if ([dic[@"parentid"] isEqualToString:selectedID]) {
+            NSDictionary * dic1 = @{
+                                    @"id":dic[@"id"],
+                                    @"town_name":dic[@"name"]
+                                    };
+            //
+            TownModel *townModel =  [TownModel yy_modelWithDictionary:dic1];
+            [self.townMarr addObject:townModel];
+        }
+    }
+    if (self.tableViewMarr.count > 3){
+        [self.titleMarr replaceObjectAtIndex:3 withObject:@"请选择"];
+    }
+    else{
+        UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
+        tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
+        tableView2.tag = 3;
+        [self.tableViewMarr addObject:tableView2];
+        [self.titleMarr addObject:@"请选择"];
+    }
+    if (self.townMarr.count > 0){
+        [self setupAllTitle:3];
+    }
+    else{
+        //没有对应的乡镇
+        if (self.tableViewMarr.count >= 4){
+            [self.titleMarr removeObjectsInRange:NSMakeRange(3, self.titleMarr.count - 4)];
+            [self.tableViewMarr removeObjectsInRange:NSMakeRange(3, self.tableViewMarr.count - 4)];
+        }
+        [self setupAllTitle:2];
+        [self tapBtnAndcancelBtnClick];
+    }
 }
 //(以下注释部分是网络请求)
 //-(void)getAddressMessageDataAddressID:(NSInteger)addressID  provinceIdOrCityId: (NSString *)provinceIdOrCityId{
-//    NSString * addressUrl = [[NSString alloc]init];
-//    NSDictionary *parameters = [[NSDictionary alloc]init];
-//    NSString * UserID = [[NSString alloc]initWithFormat:@"%ld",self.userID];
-//    if (addressID == 1) {
-//        //获取省份的URL
-//        addressUrl = @"getProvinceAddressUrl";
-//        //请求省份需要传递的参数
-//        parameters = @{@"user_id" : UserID};
-//    } else if(addressID == 2){
-//        //获取市区的URL
-//        addressUrl = @"getCityAddressUrl";
-//        //请求市区需要传递的参数
-//        parameters = @{@"province_id" : provinceIdOrCityId,
-//                       @"user_id" : UserID};
-//    }
-//    else if(addressID == 3){
-//        //获取县的URL
-//        addressUrl = @"getCountyAddressUrl";
-//        //请求县需要传递的参数
-//        parameters = @{@"city_id" : provinceIdOrCityId,
-//                       @"user_id" : UserID};
-//    }
+//        NSString * addressUrl = [[NSString alloc]init];
+//        NSDictionary *parameters = [[NSDictionary alloc]init];
+//        NSString * UserID = [[NSString alloc]initWithFormat:@"%ld",self.userID];
+//        if (addressID == 1) {
+//            //获取省份的URL
+//            addressUrl = @"getProvinceAddressUrl";
+//            //请求省份需要传递的参数
+//            parameters = @{@"user_id" : UserID};
+//        } else if(addressID == 2){
+//            //获取市区的URL
+//            addressUrl = @"getCityAddressUrl";
+//            //请求市区需要传递的参数
+//            parameters = @{@"province_id" : provinceIdOrCityId,
+//                           @"user_id" : UserID};
+//        }
+//        else if(addressID == 3){
+//            //获取县的URL
+//            addressUrl = @"getCountyAddressUrl";
+//            //请求县需要传递的参数
+//            parameters = @{@"city_id" : provinceIdOrCityId,
+//                           @"user_id" : UserID};
+//        }
 //    //网络请求
 //    [HttpRequest requestWithURLString:addressUrl parameters:parameters type:HttpRequestTypePost success:^(id responseObject) {
 //        if (responseObject != nil)
@@ -479,8 +599,7 @@
 //            ProvinceModel *provinceModel =  [ProvinceModel yy_modelWithDictionary:dic1];
 //            [self.provinceMarr addObject:provinceModel];
 //        }
-//    }
-//    else{
+//    }else{
 //        [self tapBtnAndcancelBtnClick];
 //    }
 //}
@@ -494,13 +613,13 @@
 //        }
 //        if (self.tableViewMarr.count >= 2){
 //            [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
-//             NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
-//             NSInteger count = self.titleMarr.count;
-//             NSInteger loc = index + 1;
-//             NSInteger range = count - index;
-//             [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-//             [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-//         }
+//            NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+//            NSInteger count = self.titleMarr.count;
+//            NSInteger loc = index + 1;
+//            NSInteger range = count - index;
+//            [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//        }
 //        else{
 //            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
 //            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -512,28 +631,31 @@
 //    }
 //    else{
 //        //没有对应的市
-//        if (self.tableViewMarr.count > 2){
-//            [self.titleMarr removeLastObject];
-//            [self.tableViewMarr removeLastObject];
-//        }
-//        if (self.tableViewMarr.count == 2){
-//            [self.titleMarr removeLastObject];
-//            [self.tableViewMarr removeLastObject];
+//        if (self.tableViewMarr.count >= 2){
+//            [self.titleMarr removeObjectsInRange:NSMakeRange(1, self.titleMarr.count - 2)];
+//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(1, self.tableViewMarr.count - 2)];
 //        }
 //        [self setupAllTitle:0];
 //        [self tapBtnAndcancelBtnClick];
 //    }
 //}
+//
 //-(void)caseCountyArr:(NSArray *)countyArr{
 //    if (countyArr.count > 0){
 //        [self.countyMarr removeAllObjects];
 //        for (int i = 0; i < countyArr.count; i++) {
 //            NSDictionary *dic1 = countyArr[i];
-//            CountyModel *countyModel =  [CountyModel yy_modelWithDictionary:dic1];
-//            [self.cityMarr addObject:countyModel];
+//            CountyModel *countyModel = [CountyModel yy_modelWithDictionary:dic1];
+//            [self.countyMarr addObject:countyModel];
 //        }
-//        if (self.tableViewMarr.count > 2){
+//        if (self.tableViewMarr.count >= 3){
 //            [self.titleMarr replaceObjectAtIndex:2 withObject:@"请选择"];
+//            NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+//            NSInteger count = self.titleMarr.count;
+//            NSInteger loc = index + 1;
+//            NSInteger range = count - index;
+//            [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
 //        }
 //        else{
 //            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
@@ -546,15 +668,49 @@
 //    }
 //    else{
 //        //没有对应的县
-//        if (self.tableViewMarr.count > 2){
-//            [self.titleMarr removeLastObject];
-//            [self.tableViewMarr removeLastObject];
+//        if (self.tableViewMarr.count >= 3){
+//            [self.titleMarr removeObjectsInRange:NSMakeRange(2, self.titleMarr.count - 3)];
+//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(2, self.tableViewMarr.count - 3)];
 //        }
 //        [self setupAllTitle:1];
 //        [self tapBtnAndcancelBtnClick];
 //    }
 //}
-
+//
+//-(void)caseTownArr:(NSArray *)townArr{
+//    if (townArr.count > 0){
+//        [self.townMarr removeAllObjects];
+//        for (int i = 0; i < townArr.count; i++) {
+//            NSDictionary *dic1 = townArr[i];
+//            TownModel *townModel = [TownModel yy_modelWithDictionary:dic1];
+//            [self.townMarr addObject:townModel];
+//        }
+//        if (self.tableViewMarr.count > 3){
+//            [self.titleMarr replaceObjectAtIndex:3 withObject:@"请选择"];
+//            if (self.tableViewMarr.count > 4){
+//                [self.titleMarr removeLastObject];
+//                [self.tableViewMarr removeLastObject];
+//            }
+//        }
+//        else{
+//            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
+//            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
+//            tableView2.tag = 3;
+//            [self.tableViewMarr addObject:tableView2];
+//            [self.titleMarr addObject:@"请选择"];
+//        }
+//        [self setupAllTitle:3];
+//    }
+//    else{
+//        //没有对应的乡镇
+//        if (self.tableViewMarr.count >= 4){
+//            [self.titleMarr removeObjectsInRange:NSMakeRange(3, self.titleMarr.count - 4)];
+//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(3, self.tableViewMarr.count - 4)];
+//        }
+//        [self setupAllTitle:2];
+//        [self tapBtnAndcancelBtnClick];
+//    }
+//}
 
 @end
 

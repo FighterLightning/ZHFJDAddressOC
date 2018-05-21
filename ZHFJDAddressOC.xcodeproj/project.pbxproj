@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		53013126C8CE3001E477B8B1 /* Pods_ZHFJDAddressOC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4682942D63AE8FEBED7D034E /* Pods_ZHFJDAddressOC.framework */; };
+		E3219DAF20B2C76200CB7A60 /* location.txt in Resources */ = {isa = PBXBuildFile; fileRef = E3219DAE20B2C76200CB7A60 /* location.txt */; };
+		E3219DB220B2C77200CB7A60 /* TownModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E3219DB120B2C77200CB7A60 /* TownModel.m */; };
 		E36F60261FE752F80076E566 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E36F60251FE752F80076E566 /* AppDelegate.m */; };
 		E36F60291FE752F80076E566 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E36F60281FE752F80076E566 /* ViewController.m */; };
 		E36F602C1FE752F80076E566 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E36F602A1FE752F80076E566 /* Main.storyboard */; };
@@ -25,6 +27,9 @@
 		22ED47E34F08A4082A4B195B /* Pods-ZHFJDAddressOC.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZHFJDAddressOC.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ZHFJDAddressOC/Pods-ZHFJDAddressOC.debug.xcconfig"; sourceTree = "<group>"; };
 		4682942D63AE8FEBED7D034E /* Pods_ZHFJDAddressOC.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ZHFJDAddressOC.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6AAD4A0313895F38EB77F86 /* Pods-ZHFJDAddressOC.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZHFJDAddressOC.release.xcconfig"; path = "Pods/Target Support Files/Pods-ZHFJDAddressOC/Pods-ZHFJDAddressOC.release.xcconfig"; sourceTree = "<group>"; };
+		E3219DAE20B2C76200CB7A60 /* location.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = location.txt; sourceTree = "<group>"; };
+		E3219DB020B2C77200CB7A60 /* TownModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TownModel.h; sourceTree = "<group>"; };
+		E3219DB120B2C77200CB7A60 /* TownModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TownModel.m; sourceTree = "<group>"; };
 		E36F60211FE752F80076E566 /* ZHFJDAddressOC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZHFJDAddressOC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E36F60241FE752F80076E566 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E36F60251FE752F80076E566 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -105,6 +110,7 @@
 		E36F603D1FE754DB0076E566 /* Address */ = {
 			isa = PBXGroup;
 			children = (
+				E3219DAE20B2C76200CB7A60 /* location.txt */,
 				E36F603F1FE754DB0076E566 /* HttpRequest.m */,
 				E36F603E1FE754DB0076E566 /* HttpRequest.h */,
 				E36F60411FE755200076E566 /* ZHFAddTitleAddressView.h */,
@@ -115,6 +121,8 @@
 				E36F60481FE7555E0076E566 /* CityModel.m */,
 				E36F604A1FE755710076E566 /* CountyModel.h */,
 				E36F604B1FE755710076E566 /* CountyModel.m */,
+				E3219DB020B2C77200CB7A60 /* TownModel.h */,
+				E3219DB120B2C77200CB7A60 /* TownModel.m */,
 			);
 			path = Address;
 			sourceTree = "<group>";
@@ -192,6 +200,7 @@
 				E36F60311FE752F80076E566 /* LaunchScreen.storyboard in Resources */,
 				E36F602E1FE752F80076E566 /* Assets.xcassets in Resources */,
 				E36F602C1FE752F80076E566 /* Main.storyboard in Resources */,
+				E3219DAF20B2C76200CB7A60 /* location.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -256,6 +265,7 @@
 				E36F604C1FE755710076E566 /* CountyModel.m in Sources */,
 				E36F60461FE755430076E566 /* ProvinceModel.m in Sources */,
 				E36F60491FE7555E0076E566 /* CityModel.m in Sources */,
+				E3219DB220B2C77200CB7A60 /* TownModel.m in Sources */,
 				E36F60401FE754DB0076E566 /* HttpRequest.m in Sources */,
 				E36F60261FE752F80076E566 /* AppDelegate.m in Sources */,
 			);

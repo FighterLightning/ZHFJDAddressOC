@@ -45,7 +45,7 @@
                   success:(void (^)(id))success
                   failure:(void (^)(NSError *))failure {
     
-    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
    manager.responseSerializer.acceptableContentTypes=[NSSet setWithObject:@"text/html"];
     [manager POST:URLString parameters:parameters progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
         if (success) {
