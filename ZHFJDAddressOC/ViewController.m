@@ -39,19 +39,6 @@
     self.addTitleAddressView.defaultHeight = 350;
     self.addTitleAddressView.titleScrollViewH = 37;
     [self.view addSubview:[self.addTitleAddressView initAddressView]];
-    UITableView * tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    tableView.tag = 0;
-    self.addTitleAddressView.tableViewMarr = [[NSMutableArray alloc]init];
-    self.addTitleAddressView.titleMarr = [[NSMutableArray alloc]init];
-    [self.addTitleAddressView.tableViewMarr addObject:tableView];
-    [self.addTitleAddressView.titleMarr addObject:@"请选择"];
-    //1.添加标题滚动视图
-    [self.addTitleAddressView setupTitleScrollView];
-    //2.添加内容滚动视图
-    [self.addTitleAddressView setupContentScrollView];
-    [self.addTitleAddressView setupAllTitle:0];
-    
 }
 - (IBAction)addressBtnClick:(id)sender {
     [self.addTitleAddressView addAnimate];
