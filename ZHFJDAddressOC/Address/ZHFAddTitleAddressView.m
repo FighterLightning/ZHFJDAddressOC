@@ -117,12 +117,24 @@
     titleLabel.font = [UIFont systemFontOfSize:17];
     [self.addAddressView addSubview:titleLabel];
     UIButton *cancelBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-    
     cancelBtn.frame =CGRectMake(CGRectGetMaxX(self.addAddressView.frame) - 40, 10, 30, 30);
     cancelBtn.tag = 1;
     [cancelBtn setImage:[UIImage imageNamed:@"cancel"] forState:UIControlStateNormal];
     [cancelBtn addTarget:self action:@selector(tapBtnAndcancelBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [self.addAddressView addSubview:cancelBtn];
+ 
+    UITableView * tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
+    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView.tag = 0;
+    self.tableViewMarr = [[NSMutableArray alloc]init];
+    self.titleMarr = [[NSMutableArray alloc]init];
+    [self.tableViewMarr addObject:tableView];
+    [self.titleMarr addObject:@"请选择"];
+    //1.添加标题滚动视图
+    [self setupTitleScrollView];
+    //2.添加内容滚动视图
+    [self setupContentScrollView];
+    [self setupAllTitle:0];
     return self;
 }
 -(void)addAnimate{
