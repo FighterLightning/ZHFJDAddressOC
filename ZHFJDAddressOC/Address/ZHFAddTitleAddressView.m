@@ -39,6 +39,8 @@
 @property(nonatomic,strong)UIScrollView *contentScrollView;
 @property(nonatomic,strong)UIButton *radioBtn;
 @property(nonatomic,strong)NSMutableArray *titleBtns;
+@property(nonatomic,strong)NSMutableArray *titleMarr;
+@property(nonatomic,strong)NSMutableArray *tableViewMarr;
 @property(nonatomic,strong)UILabel *lineLabel;
 @property(nonatomic,strong)NSMutableArray *titleIDMarr;
 @property(nonatomic,assign)BOOL isInitalize;
@@ -56,6 +58,20 @@
         _titleBtns = [[NSMutableArray alloc]init];
     }
     return _titleBtns;
+}
+-(NSMutableArray *)titleMarr
+{
+    if (_titleMarr == nil) {
+        _titleMarr = [[NSMutableArray alloc]init];
+    }
+    return _titleMarr;
+}
+-(NSMutableArray *)tableViewMarr
+{
+    if (_tableViewMarr == nil) {
+        _tableViewMarr = [[NSMutableArray alloc]init];
+    }
+    return _tableViewMarr;
 }
 -(NSMutableArray *)titleIDMarr
 {
@@ -122,14 +138,8 @@
     [cancelBtn setImage:[UIImage imageNamed:@"cancel"] forState:UIControlStateNormal];
     [cancelBtn addTarget:self action:@selector(tapBtnAndcancelBtnClick) forControlEvents:UIControlEventTouchUpInside];
     [self.addAddressView addSubview:cancelBtn];
- 
-    UITableView * tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-    tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-    tableView.tag = 0;
-    self.tableViewMarr = [[NSMutableArray alloc]init];
-    self.titleMarr = [[NSMutableArray alloc]init];
-    [self.tableViewMarr addObject:tableView];
-    [self.titleMarr addObject:@"请选择"];
+    
+    [self addTableViewAndTitle:0];
     //1.添加标题滚动视图
     [self setupTitleScrollView];
     //2.添加内容滚动视图
@@ -200,6 +210,7 @@
     _lineLabel.backgroundColor = [UIColor redColor];
     [self.titleScrollView addSubview:(_lineLabel)];
     CGFloat x = 10;
+    NSLog(@"%@",self.titleMarr);
     for (int i = 0; i < self.titleMarr.count ; i++) {
         NSString   *title = self.titleMarr[i];
         CGFloat titlelenth = title.length * 15;
@@ -380,6 +391,35 @@
     }
     return YES;
 }
+//添加tableView和title
+-(void)addTableViewAndTitle:(NSInteger)tableViewTag{
+    UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
+    tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
+    tableView2.tag = tableViewTag;
+    [self.tableViewMarr addObject:tableView2];
+    [self.titleMarr addObject:@"请选择"];
+}
+//改变title
+-(void)changeTitle:(NSInteger)replaceTitleMarrIndex{
+    [self.titleMarr replaceObjectAtIndex:replaceTitleMarrIndex withObject:@"请选择"];
+    NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
+    NSInteger count = self.titleMarr.count;
+    NSInteger loc = index + 1;
+    NSInteger range = count - index;
+    [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+    [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+}
+//移除多余的title和tableView,收回选择器
+-(void)removeTitleAndTableViewCancel:(NSInteger)index{
+    NSInteger indexAddOne = index + 1;
+    NSInteger indexsubOne = index - 1;
+    if (self.tableViewMarr.count >= indexAddOne){
+        [self.titleMarr removeObjectsInRange:NSMakeRange(index, self.titleMarr.count - indexAddOne)];
+        [self.tableViewMarr removeObjectsInRange:NSMakeRange(index, self.tableViewMarr.count - indexAddOne)];
+    }
+    [self setupAllTitle:indexsubOne];
+    [self tapBtnAndcancelBtnClick];
+}
 //本地数据
 -(void)getAddressMessageDataAddressID:(NSInteger)addressID  provinceIdOrCityId: (NSString *)provinceIdOrCityId{
     if (addressID == 1) {
@@ -405,11 +445,8 @@
         for (NSDictionary *dic in provinceArr)
         {
             if ([dic[@"parentid"] isEqualToString:@"0"]) {
-                NSDictionary * dic1 = @{
-                                        @"id":dic[@"id"],
-                                        @"province_name":dic[@"name"]
-                                        };
-                //
+                NSDictionary * dic1 = @{@"id":dic[@"id"],
+                                       @"province_name":dic[@"name"]};
                 ProvinceModel *provinceModel = [ProvinceModel yy_modelWithDictionary:dic1];
                 [self.provinceMarr addObject:provinceModel];
             }
@@ -423,119 +460,72 @@
     [self.cityMarr removeAllObjects];
     for (NSDictionary *dic in cityArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
-            NSDictionary * dic1 = @{
-                                    @"id":dic[@"id"],
-                                    @"city_name":dic[@"name"]
-                                    };
+            NSDictionary * dic1 = @{@"id":dic[@"id"],
+                                   @"city_name":dic[@"name"]};
             CityModel *cityModel = [CityModel yy_modelWithDictionary:dic1];
             [self.cityMarr addObject:cityModel];
         }
     }
     if (self.tableViewMarr.count >= 2){
-        [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
-        NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
-        NSInteger count = self.titleMarr.count;
-        NSInteger loc = index + 1;
-        NSInteger range = count - index;
-        [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-        [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+        [self changeTitle:1];
     }
     else{
-        UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-        tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-        tableView2.tag = 1;
-        [self.tableViewMarr addObject:tableView2];
-        [self.titleMarr addObject:@"请选择"];
+        [self addTableViewAndTitle:1];
     }
     if (self.cityMarr.count > 0) {
         [self setupAllTitle:1];
     }
     else{
         //没有对应的市
-        if (self.tableViewMarr.count >= 2){
-            [self.titleMarr removeObjectsInRange:NSMakeRange(1, self.titleMarr.count - 2)];
-            [self.tableViewMarr removeObjectsInRange:NSMakeRange(1, self.tableViewMarr.count - 2)];
-        }
-        [self setupAllTitle:0];
-        [self tapBtnAndcancelBtnClick];
+        [self removeTitleAndTableViewCancel:1];
     }
 }
 -(void)caseCountyArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
     [self.countyMarr removeAllObjects];
     for (NSDictionary *dic in countyArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
-            NSDictionary * dic1 = @{
-                                    @"id":dic[@"id"],
-                                    @"county_name":dic[@"name"]
-                                    };
-            //
+            NSDictionary * dic1 = @{@"id":dic[@"id"],
+                                    @"county_name":dic[@"name"]};
             CountyModel *countyModel =  [CountyModel yy_modelWithDictionary:dic1];
             [self.countyMarr addObject:countyModel];
         }
     }
     if (self.tableViewMarr.count >= 3){
-        [self.titleMarr replaceObjectAtIndex:2 withObject:@"请选择"];
-        NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
-        NSInteger count = self.titleMarr.count;
-        NSInteger loc = index + 1;
-        NSInteger range = count - index;
-        [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-        [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+        [self changeTitle:2];
     }
     else{
-        UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-        tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-        tableView2.tag = 2;
-        [self.tableViewMarr addObject:tableView2];
-        [self.titleMarr addObject:@"请选择"];
+        [self addTableViewAndTitle:2];
     }
     if (self.countyMarr.count > 0){
         [self setupAllTitle:2];
     }
     else{
         //没有对应的县
-        if (self.tableViewMarr.count >= 3){
-            [self.titleMarr removeObjectsInRange:NSMakeRange(2, self.titleMarr.count - 3)];
-            [self.tableViewMarr removeObjectsInRange:NSMakeRange(2, self.tableViewMarr.count - 3)];
-        }
-        [self setupAllTitle:1];
-        [self tapBtnAndcancelBtnClick];
+        [self removeTitleAndTableViewCancel:2];
     }
 }
 -(void)caseTownArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
     [self.townMarr removeAllObjects];
     for (NSDictionary *dic in countyArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
-            NSDictionary * dic1 = @{
-                                    @"id":dic[@"id"],
-                                    @"town_name":dic[@"name"]
-                                    };
-            //
+            NSDictionary * dic1 = @{@"id":dic[@"id"],
+                                    @"town_name":dic[@"name"]};
             TownModel *townModel =  [TownModel yy_modelWithDictionary:dic1];
             [self.townMarr addObject:townModel];
         }
     }
-    if (self.tableViewMarr.count > 3){
-        [self.titleMarr replaceObjectAtIndex:3 withObject:@"请选择"];
+    if (self.tableViewMarr.count >= 4){
+        [self changeTitle:3];
     }
     else{
-        UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-        tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-        tableView2.tag = 3;
-        [self.tableViewMarr addObject:tableView2];
-        [self.titleMarr addObject:@"请选择"];
+        [self addTableViewAndTitle:3];
     }
     if (self.townMarr.count > 0){
         [self setupAllTitle:3];
     }
     else{
         //没有对应的乡镇
-        if (self.tableViewMarr.count >= 4){
-            [self.titleMarr removeObjectsInRange:NSMakeRange(3, self.titleMarr.count - 4)];
-            [self.tableViewMarr removeObjectsInRange:NSMakeRange(3, self.tableViewMarr.count - 4)];
-        }
-        [self setupAllTitle:2];
-        [self tapBtnAndcancelBtnClick];
+        [self removeTitleAndTableViewCancel:3];
     }
 }
 //(以下注释部分是网络请求)
@@ -583,6 +573,10 @@
 //                    //拿到县列表
 //                    arr = dic[@"data"];
 //                        [self caseCountyArr:arr];
+//                case 4:
+//                    //拿到乡镇列表
+//                    arr = dic[@"data"];
+//                        [self caseTownArr:arr];
 //
 //                default:
 //                    break;
@@ -624,31 +618,16 @@
 //            [self.cityMarr addObject:cityModel];
 //        }
 //        if (self.tableViewMarr.count >= 2){
-//            [self.titleMarr replaceObjectAtIndex:1 withObject:@"请选择"];
-//            NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
-//            NSInteger count = self.titleMarr.count;
-//            NSInteger loc = index + 1;
-//            NSInteger range = count - index;
-//            [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//            [self changeTitle:1];
 //        }
 //        else{
-//            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-//            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-//            tableView2.tag = 1;
-//            [self.tableViewMarr addObject:tableView2];
-//            [self.titleMarr addObject:@"请选择"];
+//            [self addTableViewAndTitle:1];
 //        }
 //        [self setupAllTitle:1];
 //    }
 //    else{
 //        //没有对应的市
-//        if (self.tableViewMarr.count >= 2){
-//            [self.titleMarr removeObjectsInRange:NSMakeRange(1, self.titleMarr.count - 2)];
-//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(1, self.tableViewMarr.count - 2)];
-//        }
-//        [self setupAllTitle:0];
-//        [self tapBtnAndcancelBtnClick];
+//        [self removeTitleAndTableViewCancel:1];
 //    }
 //}
 //
@@ -661,31 +640,16 @@
 //            [self.countyMarr addObject:countyModel];
 //        }
 //        if (self.tableViewMarr.count >= 3){
-//            [self.titleMarr replaceObjectAtIndex:2 withObject:@"请选择"];
-//            NSInteger index = [self.titleMarr indexOfObject:@"请选择"];
-//            NSInteger count = self.titleMarr.count;
-//            NSInteger loc = index + 1;
-//            NSInteger range = count - index;
-//            [self.titleMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
-//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(loc, range - 1)];
+//           [self changeTitle:2];
 //        }
 //        else{
-//            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-//            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-//            tableView2.tag = 2;
-//            [self.tableViewMarr addObject:tableView2];
-//            [self.titleMarr addObject:@"请选择"];
+//            [self addTableViewAndTitle:2];
 //        }
 //        [self setupAllTitle:2];
 //    }
 //    else{
 //        //没有对应的县
-//        if (self.tableViewMarr.count >= 3){
-//            [self.titleMarr removeObjectsInRange:NSMakeRange(2, self.titleMarr.count - 3)];
-//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(2, self.tableViewMarr.count - 3)];
-//        }
-//        [self setupAllTitle:1];
-//        [self tapBtnAndcancelBtnClick];
+//        [self removeTitleAndTableViewCancel:2];
 //    }
 //}
 //
@@ -697,30 +661,17 @@
 //            TownModel *townModel = [TownModel yy_modelWithDictionary:dic1];
 //            [self.townMarr addObject:townModel];
 //        }
-//        if (self.tableViewMarr.count > 3){
-//            [self.titleMarr replaceObjectAtIndex:3 withObject:@"请选择"];
-//            if (self.tableViewMarr.count > 4){
-//                [self.titleMarr removeLastObject];
-//                [self.tableViewMarr removeLastObject];
-//            }
+//        if (self.tableViewMarr.count >= 4){
+//           [self changeTitle:3];
 //        }
 //        else{
-//            UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
-//            tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
-//            tableView2.tag = 3;
-//            [self.tableViewMarr addObject:tableView2];
-//            [self.titleMarr addObject:@"请选择"];
+//            [self addTableViewAndTitle:3];
 //        }
 //        [self setupAllTitle:3];
 //    }
 //    else{
 //        //没有对应的乡镇
-//        if (self.tableViewMarr.count >= 4){
-//            [self.titleMarr removeObjectsInRange:NSMakeRange(3, self.titleMarr.count - 4)];
-//            [self.tableViewMarr removeObjectsInRange:NSMakeRange(3, self.tableViewMarr.count - 4)];
-//        }
-//        [self setupAllTitle:2];
-//        [self tapBtnAndcancelBtnClick];
+//        [self removeTitleAndTableViewCancel:3];
 //    }
 //}
 

@@ -26,11 +26,6 @@
 @property(nonatomic,assign)CGFloat titleScrollViewH;
 @property(nonatomic,copy)NSString *title;
 @property(nonatomic,strong)UIView *addAddressView;
-@property(nonatomic,strong)NSMutableArray *titleMarr;
-@property(nonatomic,strong)NSMutableArray *tableViewMarr;
 -(UIView *)initAddressView;
--(void)setupTitleScrollView;
--(void)setupContentScrollView;
--(void)setupAllTitle:(NSInteger)selectId;
 -(void)addAnimate;
 @end
