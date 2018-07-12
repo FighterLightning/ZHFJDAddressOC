@@ -565,18 +565,22 @@
 //                    //拿到省列表
 //                        arr =  dic[@"data"];
 //                        [self caseProvinceArr:arr];
+//                        break;
 //                case 2:
 //                    //拿到市列表
 //                    arr = dic[@"data"];
 //                        [self caseCityArr:arr];
+//                        break;
 //                case 3:
 //                    //拿到县列表
 //                    arr = dic[@"data"];
 //                        [self caseCountyArr:arr];
+//                        break;
 //                case 4:
 //                    //拿到乡镇列表
 //                    arr = dic[@"data"];
 //                        [self caseTownArr:arr];
+//                        break;
 //
 //                default:
 //                    break;
