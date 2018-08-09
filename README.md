@@ -2,6 +2,10 @@
 ### 这是一个自定义仿京东地址选择器--OC版本（保证集成成功，有不懂的地方可加QQ：991150443 进行讨论。）
 
 
+ 
+ ![](./ZHFJDAddressOC/1.gif)
+
+
 [Swift版本地址：](https://github.com/FighterLightning/ZHFJDAddress) 
 
 `
