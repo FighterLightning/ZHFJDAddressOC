@@ -26,7 +26,7 @@ https://github.com/FighterLightning/ZHFJDAddress.git
  
 # PS
 
- 如果感觉有帮助，不要吝啬你的星星哦！
+ 如果感觉有帮助，可以给颗小星星哦！
  该demo地址：
  
  `
