@@ -4,9 +4,6 @@ Swift版本地址：
 
 `
 https://github.com/FighterLightning/ZHFJDAddress.git
-该demo地址：
-`
-https://github.com/FighterLightning/ZHFJDAddressOC.git
 
 ---
 
@@ -35,14 +32,16 @@ https://github.com/FighterLightning/ZHFJDAddressOC.git
 ```
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 ```
-通过对这个点击方法里 self.titleMarr，（ 存放选中地址名字的可变数组）
-self.titleIDMarr （存放选中地址ID的可变数组）
-进行增加，删除，改。
-然后获得下一级数据（同时判断是否有下一级，没有直接回收地址选择器）
-把当前地址展示，同时把ID传入控制器。
+  通过对这个点击方法里 self.titleMarr，（ 存放选中地址名字的可变数组)   
+  self.titleIDMarr （存放选中地址ID的可变数组）
+  进行增加，删除，改。
+  然后获得下一级数据（同时判断是否有下一级，没有直接回收地址选择器）
+  把当前地址展示，同时把ID传入控制器。
  
 # PS
 
  如果感觉有帮助，感谢fork star！
  
-
+该demo地址：
+`
+https://github.com/FighterLightning/ZHFJDAddressOC.git
