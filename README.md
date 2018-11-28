@@ -4,6 +4,9 @@ Swift版本地址：
 
 `
 https://github.com/FighterLightning/ZHFJDAddress.git
+该demo地址：
+`
+https://github.com/FighterLightning/ZHFJDAddressOC.git
 
 ---
 
@@ -41,7 +44,5 @@ self.titleIDMarr （存放选中地址ID的可变数组）
 # PS
 
  如果感觉有帮助，感谢fork star！
- 该demo地址：
  
- `
- https://github.com/FighterLightning/ZHFJDAddressOC.git
+
