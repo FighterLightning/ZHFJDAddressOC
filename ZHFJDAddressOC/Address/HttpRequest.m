@@ -1,9 +1,5 @@
 //
 //  HttpRequest.m
-//  买手帮
-//
-//  Created by 雅美科技 on 16/11/25.
-//  Copyright © 2016年 Lighting. All rights reserved.
 //
 
 #import "HttpRequest.h"
