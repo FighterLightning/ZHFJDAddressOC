@@ -14,6 +14,7 @@
  3.把以下代码添加进自己的控制器方可使用,注意顺序，网络请求看ZHFAddTitleAddressView.m头部注释根据需求进行修改
  4.如果感觉有帮助，不要吝啬你的星星哦！
  该demo地址：https://github.com/FighterLightning/ZHFJDAddressOC.git
+  简书链接：https://www.jianshu.com/p/0269071219af
  */
 /*
  这个视图你需要修改的地方为：(网络请求部分)
