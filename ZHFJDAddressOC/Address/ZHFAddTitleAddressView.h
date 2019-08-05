@@ -20,8 +20,7 @@
 -(void)cancelBtnClick:(NSString *)titleAddress titleID:(NSString *)titleID;
 @end
 @interface ZHFAddTitleAddressView : UIView
-@property(nonatomic,assign)id<ZHFAddTitleAddressViewDelegate>delegate1;
-@property(nonatomic,assign)NSInteger userID;
+@property(nonatomic,weak)id<ZHFAddTitleAddressViewDelegate>delegate1;
 @property(nonatomic,assign)NSUInteger defaultHeight;
 @property(nonatomic,assign)CGFloat titleScrollViewH;
 @property(nonatomic,copy)NSString *title;
