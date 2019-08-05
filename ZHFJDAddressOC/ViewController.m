@@ -34,8 +34,7 @@
 }
 -(void)setUI{
     self.addTitleAddressView = [[ZHFAddTitleAddressView alloc]init];
-     self.addTitleAddressView.title = @"选择地址";
-    self.addTitleAddressView.userID = 7;
+    self.addTitleAddressView.title = @"选择地址";
     self.addTitleAddressView.delegate1 = self;
     self.addTitleAddressView.defaultHeight = 350;
     self.addTitleAddressView.titleScrollViewH = 37;
