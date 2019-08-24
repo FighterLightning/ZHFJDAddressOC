@@ -21,6 +21,9 @@
 		E36F60461FE755430076E566 /* ProvinceModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E36F60451FE755430076E566 /* ProvinceModel.m */; };
 		E36F60491FE7555E0076E566 /* CityModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E36F60481FE7555E0076E566 /* CityModel.m */; };
 		E36F604C1FE755710076E566 /* CountyModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E36F604B1FE755710076E566 /* CountyModel.m */; };
+		E3E290342310F811007EA507 /* AddressVC.m in Sources */ = {isa = PBXBuildFile; fileRef = E3E290322310F811007EA507 /* AddressVC.m */; };
+		E3E290352310F811007EA507 /* AddressVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = E3E290332310F811007EA507 /* AddressVC.xib */; };
+		E3E29038231119E3007EA507 /* AddressCell.m in Sources */ = {isa = PBXBuildFile; fileRef = E3E29037231119E3007EA507 /* AddressCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +53,11 @@
 		E36F60481FE7555E0076E566 /* CityModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CityModel.m; sourceTree = "<group>"; };
 		E36F604A1FE755710076E566 /* CountyModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CountyModel.h; sourceTree = "<group>"; };
 		E36F604B1FE755710076E566 /* CountyModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CountyModel.m; sourceTree = "<group>"; };
+		E3E290312310F811007EA507 /* AddressVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddressVC.h; sourceTree = "<group>"; };
+		E3E290322310F811007EA507 /* AddressVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddressVC.m; sourceTree = "<group>"; };
+		E3E290332310F811007EA507 /* AddressVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AddressVC.xib; sourceTree = "<group>"; };
+		E3E29036231119E3007EA507 /* AddressCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AddressCell.h; sourceTree = "<group>"; };
+		E3E29037231119E3007EA507 /* AddressCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AddressCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +106,9 @@
 				E36F60251FE752F80076E566 /* AppDelegate.m */,
 				E36F60271FE752F80076E566 /* ViewController.h */,
 				E36F60281FE752F80076E566 /* ViewController.m */,
+				E3E290312310F811007EA507 /* AddressVC.h */,
+				E3E290322310F811007EA507 /* AddressVC.m */,
+				E3E290332310F811007EA507 /* AddressVC.xib */,
 				E36F602A1FE752F80076E566 /* Main.storyboard */,
 				E36F602D1FE752F80076E566 /* Assets.xcassets */,
 				E36F602F1FE752F80076E566 /* LaunchScreen.storyboard */,
@@ -115,6 +126,8 @@
 				E36F603E1FE754DB0076E566 /* HttpRequest.h */,
 				E36F60411FE755200076E566 /* ZHFAddTitleAddressView.h */,
 				E36F60421FE755200076E566 /* ZHFAddTitleAddressView.m */,
+				E3E29036231119E3007EA507 /* AddressCell.h */,
+				E3E29037231119E3007EA507 /* AddressCell.m */,
 				E36F60441FE755430076E566 /* ProvinceModel.h */,
 				E36F60451FE755430076E566 /* ProvinceModel.m */,
 				E36F60471FE7555E0076E566 /* CityModel.h */,
@@ -199,6 +212,7 @@
 			files = (
 				E36F60311FE752F80076E566 /* LaunchScreen.storyboard in Resources */,
 				E36F602E1FE752F80076E566 /* Assets.xcassets in Resources */,
+				E3E290352310F811007EA507 /* AddressVC.xib in Resources */,
 				E36F602C1FE752F80076E566 /* Main.storyboard in Resources */,
 				E3219DAF20B2C76200CB7A60 /* location.txt in Resources */,
 			);
@@ -259,11 +273,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3E29038231119E3007EA507 /* AddressCell.m in Sources */,
 				E36F60431FE755200076E566 /* ZHFAddTitleAddressView.m in Sources */,
 				E36F60291FE752F80076E566 /* ViewController.m in Sources */,
 				E36F60341FE752F80076E566 /* main.m in Sources */,
 				E36F604C1FE755710076E566 /* CountyModel.m in Sources */,
 				E36F60461FE755430076E566 /* ProvinceModel.m in Sources */,
+				E3E290342310F811007EA507 /* AddressVC.m in Sources */,
 				E36F60491FE7555E0076E566 /* CityModel.m in Sources */,
 				E3219DB220B2C77200CB7A60 /* TownModel.m in Sources */,
 				E36F60401FE754DB0076E566 /* HttpRequest.m in Sources */,
@@ -403,11 +419,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = E2W28EC2KB;
+				DEVELOPMENT_TEAM = 8CB6874GM5;
 				INFOPLIST_FILE = ZHFJDAddressOC/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Lighting.com.1;
+				PRODUCT_BUNDLE_IDENTIFIER = Lighting.comm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -419,11 +435,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = E2W28EC2KB;
+				DEVELOPMENT_TEAM = 8CB6874GM5;
 				INFOPLIST_FILE = ZHFJDAddressOC/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = Lighting.com.1;
+				PRODUCT_BUNDLE_IDENTIFIER = Lighting.comm;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TARGETED_DEVICE_FAMILY = 1;
 			};

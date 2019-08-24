@@ -30,6 +30,7 @@
 #import "CityModel.h"
 #import "CountyModel.h"
 #import "TownModel.h"
+#import "AddressCell.h"
 #import <YYModel/YYModel.h>
 #import "HttpRequest.h"
 //设备物理尺寸
@@ -43,7 +44,6 @@
 @property(nonatomic,strong)NSMutableArray *titleMarr;
 @property(nonatomic,strong)NSMutableArray *tableViewMarr;
 @property(nonatomic,strong)UILabel *lineLabel;
-@property(nonatomic,strong)NSMutableArray *titleIDMarr;
 @property(nonatomic,assign)BOOL isInitalize;
 @property(nonatomic,assign)BOOL isclick; //判断是滚动还是点击
 @property(nonatomic,strong)NSMutableArray *provinceMarr;//省
@@ -51,6 +51,8 @@
 @property(nonatomic,strong)NSMutableArray *countyMarr;//县
 @property(nonatomic,strong)NSMutableArray *townMarr;//乡
 @property(nonatomic,strong)NSArray *resultArr;//本地数组
+@property(nonatomic,assign)NSInteger PCCTID;
+@property(nonatomic,assign)NSInteger scroolToRow; //确定在更改地址的时候能滚到对应的位置请求到下一级
 @end
 @implementation ZHFAddTitleAddressView
 -(NSMutableArray *)titleBtns
@@ -211,7 +213,6 @@
     _lineLabel.backgroundColor = [UIColor redColor];
     [self.titleScrollView addSubview:(_lineLabel)];
     CGFloat x = 10;
-    NSLog(@"%@",self.titleMarr);
     for (int i = 0; i < self.titleMarr.count ; i++) {
         NSString   *title = self.titleMarr[i];
         CGFloat titlelenth = title.length * 15;
@@ -241,8 +242,10 @@
     titleBtn.selected = YES;
     [self setupOneTableView:titleBtn.tag];
     CGFloat x  = titleBtn.tag * screen_width;
-    self.contentScrollView.contentOffset = CGPointMake(x, 0);
     self.lineLabel.frame = CGRectMake(CGRectGetMinX(titleBtn.frame), self.titleScrollViewH - 3,titleBtn.frame.size.width, 3);
+    [UIView animateWithDuration:0.25 animations:^{
+         self.contentScrollView.contentOffset = CGPointMake(x, 0);
+    }];
     self.radioBtn = titleBtn;
     self.isclick = YES;
     }
@@ -294,32 +297,57 @@
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     static NSString * AddressAdministerCellIdentifier = @"AddressAdministerCellIdentifier";
-    UITableViewCell *cell = (UITableViewCell*)[tableView dequeueReusableCellWithIdentifier:AddressAdministerCellIdentifier];
+     AddressCell *cell = [tableView dequeueReusableCellWithIdentifier:AddressAdministerCellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:AddressAdministerCellIdentifier];
+        cell = [[AddressCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:AddressAdministerCellIdentifier];
     }
     if (tableView.tag == 0) {
         ProvinceModel * provinceModel = self.provinceMarr[indexPath.row];
-        cell.textLabel.text = provinceModel.province_name;
+        cell.nameLabel.text = provinceModel.province_name;
+        self.PCCTID = provinceModel.id;
     }
     else if (tableView.tag == 1) {
         CityModel *cityModel = self.cityMarr[indexPath.row];
-        cell.textLabel.text= cityModel.city_name;
+        cell.nameLabel.text= cityModel.city_name;
+        self.PCCTID = cityModel.id;
     }
     else if (tableView.tag == 2){
         CountyModel * countyModel  = self.countyMarr[indexPath.row];
-        cell.textLabel.text = countyModel.county_name;
+        cell.nameLabel.text = countyModel.county_name;
+        self.PCCTID = countyModel.id;
     }
     else if (tableView.tag == 3){
         TownModel * townModel  = self.townMarr[indexPath.row];
-        cell.textLabel.text = townModel.town_name;
+        cell.nameLabel.text = townModel.town_name;
+        self.PCCTID = townModel.id;
     }
-    cell.textLabel.font = [UIFont systemFontOfSize:13];
-    cell.textLabel.textColor = [UIColor grayColor];
+    if (self.titleIDMarr.count > tableView.tag){
+        NSInteger  pcctId  =  [self.titleIDMarr[tableView.tag] integerValue];
+        if (self.PCCTID == pcctId){
+            [cell.nameLabel setTextColor:UIColor.redColor];
+            [cell.imageIcon setHidden:false];
+            if (self.isChangeAddress == true){
+                [self tableView:tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:indexPath.row inSection:0]];
+            }
+        }
+        else{
+            [cell.nameLabel setTextColor:UIColor.grayColor];
+            [cell.imageIcon setHidden:true];
+        }
+    }
+    CGSize sizeNew = [cell.nameLabel.text sizeWithAttributes:@{NSFontAttributeName: [UIFont systemFontOfSize:13]}];
+    // 重新设置frame
+    cell.nameLabel.frame = CGRectMake(20, 0, sizeNew.width, 40);
+    cell.imageIcon.frame = CGRectMake(20 + sizeNew.width + 5, 25/2, 15, 15);
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (self.isChangeAddress == false) {
+        //先刷新当前选中的tableView
+        UITableView * tableView1   = self.tableViewMarr[tableView.tag];
+        [tableView1 reloadData];
+    }
     if (tableView.tag == 0 || tableView.tag == 1 || tableView.tag == 2){
         if (tableView.tag == 0){
             ProvinceModel *provinceModel = self.provinceMarr[indexPath.row];
@@ -379,7 +407,12 @@
             [self.titleIDMarr addObject:townID];
         }
         [self setupAllTitle:tableView.tag];
-        [self tapBtnAndcancelBtnClick];
+        if (self.isChangeAddress == false){
+            [self tapBtnAndcancelBtnClick];
+        }
+        else{
+            self.isChangeAddress = false;
+        }
     }
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -396,6 +429,7 @@
 -(void)addTableViewAndTitle:(NSInteger)tableViewTag{
     UITableView * tableView2 = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 200) style:UITableViewStylePlain];
     tableView2.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [tableView2 registerClass:[AddressCell class] forCellReuseIdentifier:@"AddressAdministerCellIdentifier"];
     tableView2.tag = tableViewTag;
     [self.tableViewMarr addObject:tableView2];
     [self.titleMarr addObject:@"请选择"];
@@ -419,7 +453,12 @@
         [self.tableViewMarr removeObjectsInRange:NSMakeRange(index, self.tableViewMarr.count - indexAddOne)];
     }
     [self setupAllTitle:indexsubOne];
-    [self tapBtnAndcancelBtnClick];
+    if (self.isChangeAddress == false){
+        [self tapBtnAndcancelBtnClick];
+    }
+    else{
+        self.isChangeAddress = false;
+    }
 }
 //本地数据
 -(void)getAddressMessageDataAddressID:(NSInteger)addressID  provinceIdOrCityId: (NSString *)provinceIdOrCityId{
@@ -438,32 +477,63 @@
     if (self.tableViewMarr.count >= addressID){
         UITableView* tableView1   = self.tableViewMarr[addressID - 1];
         [tableView1 reloadData];
+        [tableView1 layoutIfNeeded];
+        if (self.isChangeAddress == true){
+            //保证列表刷新之后才进行滚动处理
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSLog(@"%ld",self.scroolToRow);
+                if ([tableView1 numberOfRowsInSection:0] >= self.scroolToRow){
+                    [tableView1 scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.scroolToRow  inSection:0 ] atScrollPosition: UITableViewScrollPositionBottom animated:false];
+                }
+            });
+        }
     }
 }
 -(void)caseProvinceArr:(NSArray *)provinceArr{
     [self.provinceMarr removeAllObjects];
+    NSInteger j = -1;
     if (provinceArr.count > 0){
         for (NSDictionary *dic in provinceArr)
         {
             if ([dic[@"parentid"] isEqualToString:@"0"]) {
+                j = j + 1;
                 NSDictionary * dic1 = @{@"id":dic[@"id"],
                                        @"province_name":dic[@"name"]};
                 ProvinceModel *provinceModel = [ProvinceModel yy_modelWithDictionary:dic1];
+                if (self.titleIDMarr.count > 0){
+                    NSInteger provinceID = [self.titleIDMarr[0] integerValue];
+                    if (provinceModel.id == provinceID){
+                        self.scroolToRow = j;
+                    }
+                }
                 [self.provinceMarr addObject:provinceModel];
             }
         }
     }
     else{
-        [self tapBtnAndcancelBtnClick];
+        if (self.isChangeAddress == false){
+            [self tapBtnAndcancelBtnClick];
+        }
+        else{
+            self.isChangeAddress = false;
+        }
     }
 }
 -(void)caseCityArr:(NSArray *)cityArr withSelectedID:(NSString *)selectedID{
     [self.cityMarr removeAllObjects];
+    NSInteger j = -1;
     for (NSDictionary *dic in cityArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
+            j = j + 1;
             NSDictionary * dic1 = @{@"id":dic[@"id"],
                                    @"city_name":dic[@"name"]};
             CityModel *cityModel = [CityModel yy_modelWithDictionary:dic1];
+            if (self.titleIDMarr.count > 1){
+                NSInteger cityID = [self.titleIDMarr[1] integerValue];
+                if (cityModel.id == cityID){
+                    self.scroolToRow = j;
+                }
+            }
             [self.cityMarr addObject:cityModel];
         }
     }
@@ -483,11 +553,19 @@
 }
 -(void)caseCountyArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
     [self.countyMarr removeAllObjects];
+    NSInteger j = -1;
     for (NSDictionary *dic in countyArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
+            j = j + 1;
             NSDictionary * dic1 = @{@"id":dic[@"id"],
                                     @"county_name":dic[@"name"]};
             CountyModel *countyModel =  [CountyModel yy_modelWithDictionary:dic1];
+            if (self.titleIDMarr.count > 2){
+                NSInteger countyID = [self.titleIDMarr[2] integerValue];
+                if (countyModel.id == countyID){
+                    self.scroolToRow = j;
+                }
+            }
             [self.countyMarr addObject:countyModel];
         }
     }
@@ -507,11 +585,19 @@
 }
 -(void)caseTownArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
     [self.townMarr removeAllObjects];
+    NSInteger j = -1;
     for (NSDictionary *dic in countyArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
+            j = j + 1;
             NSDictionary * dic1 = @{@"id":dic[@"id"],
                                     @"town_name":dic[@"name"]};
             TownModel *townModel =  [TownModel yy_modelWithDictionary:dic1];
+            if (self.titleIDMarr.count > 3){
+                NSInteger townID = [self.titleIDMarr[3] integerValue];
+                if (townModel.id == townID){
+                    self.scroolToRow = j;
+                }
+            }
             [self.townMarr addObject:townModel];
         }
     }

@@ -16,13 +16,13 @@
  简书链接：https://www.jianshu.com/p/0269071219af
  */
 
-#define screen_width [UIScreen mainScreen].bounds.size.width
-#define screen_height [UIScreen mainScreen].bounds.size.height
+
 #import "ViewController.h"
-#import "ZHFAddTitleAddressView.h"
-@interface ViewController ()<ZHFAddTitleAddressViewDelegate>
-@property (weak, nonatomic) IBOutlet UIButton *addressBtn;
-@property(nonatomic,strong)ZHFAddTitleAddressView * addTitleAddressView;
+#import "AddressVC.h"
+@interface ViewController ()
+@property (weak, nonatomic) IBOutlet UIButton *addressBtn; //新增
+@property (weak, nonatomic) IBOutlet UIButton *editAdressBtn; //编辑地址
+
 
 @end
 
@@ -30,23 +30,25 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [self setUI];
+    
 }
--(void)setUI{
-    self.addTitleAddressView = [[ZHFAddTitleAddressView alloc]init];
-    self.addTitleAddressView.title = @"选择地址";
-    self.addTitleAddressView.delegate1 = self;
-    self.addTitleAddressView.defaultHeight = 350;
-    self.addTitleAddressView.titleScrollViewH = 37;
-    [self.view addSubview:[self.addTitleAddressView initAddressView]];
+
+- (IBAction)addressBtnClick:(UIButton *)sender {
+    if (sender.tag == 1){
+        //新建
+        AddressVC *addressVC = [[AddressVC alloc]init];
+        addressVC.isEdit = false;
+        [self.navigationController pushViewController:addressVC animated:true];
+    }
+    if (sender.tag == 2){
+        //编辑
+        AddressVC *addressVC = [[AddressVC alloc]init];
+        addressVC.isEdit = true;
+        [self.navigationController pushViewController:addressVC animated:true];
+
+    }
 }
-- (IBAction)addressBtnClick:(id)sender {
-    [self.addTitleAddressView addAnimate];
-}
--(void)cancelBtnClick:(NSString *)titleAddress titleID:(NSString *)titleID{
-    [self.addressBtn setTitle:titleAddress forState:UIControlStateNormal];
-    NSLog( @"%@", [NSString stringWithFormat:@"打印的对应省市县的id=%@",titleID]);
-}
+
 
 
 

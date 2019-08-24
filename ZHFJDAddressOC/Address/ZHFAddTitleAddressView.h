@@ -24,7 +24,9 @@
 @property(nonatomic,assign)NSUInteger defaultHeight;
 @property(nonatomic,assign)CGFloat titleScrollViewH;
 @property(nonatomic,copy)NSString *title;
+@property(nonatomic,strong)NSMutableArray *titleIDMarr;
 @property(nonatomic,strong)UIView *addAddressView;
+@property(nonatomic,assign)BOOL isChangeAddress; //这个属性如果是新增地址的时候设置成false
 -(UIView *)initAddressView;
 -(void)addAnimate;
 @end
