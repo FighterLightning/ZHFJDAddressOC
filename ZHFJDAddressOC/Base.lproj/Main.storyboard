@@ -74,10 +74,6 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="tLM-Ck-o6j"/>
-                    <connections>
-                        <outlet property="addressBtn" destination="mJz-BG-R5d" id="OBm-KT-dJk"/>
-                        <outlet property="editAdressBtn" destination="E8x-2C-VHM" id="CVI-Yy-3ak"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

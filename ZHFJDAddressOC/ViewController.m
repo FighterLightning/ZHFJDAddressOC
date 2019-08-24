@@ -20,8 +20,6 @@
 #import "ViewController.h"
 #import "AddressVC.h"
 @interface ViewController ()
-@property (weak, nonatomic) IBOutlet UIButton *addressBtn; //新增
-@property (weak, nonatomic) IBOutlet UIButton *editAdressBtn; //编辑地址
 
 
 @end
