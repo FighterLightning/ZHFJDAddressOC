@@ -520,6 +520,7 @@
     }
 }
 -(void)caseCityArr:(NSArray *)cityArr withSelectedID:(NSString *)selectedID{
+    BOOL isAddress = NO;
     [self.cityMarr removeAllObjects];
     NSInteger j = -1;
     for (NSDictionary *dic in cityArr) {
@@ -532,6 +533,7 @@
                 NSInteger cityID = [self.titleIDMarr[1] integerValue];
                 if (cityModel.id == cityID){
                     self.scroolToRow = j;
+                    isAddress = YES;
                 }
             }
             [self.cityMarr addObject:cityModel];
@@ -550,9 +552,13 @@
         //没有对应的市
         [self removeTitleAndTableViewCancel:1];
     }
+   if (!isAddress) {
+        self.isChangeAddress = false;
+    }
 }
 -(void)caseCountyArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
     [self.countyMarr removeAllObjects];
+    BOOL isAddress = NO;
     NSInteger j = -1;
     for (NSDictionary *dic in countyArr) {
         if ([dic[@"parentid"] isEqualToString:selectedID]) {
@@ -564,6 +570,7 @@
                 NSInteger countyID = [self.titleIDMarr[2] integerValue];
                 if (countyModel.id == countyID){
                     self.scroolToRow = j;
+                    isAddress = YES;
                 }
             }
             [self.countyMarr addObject:countyModel];
@@ -581,6 +588,9 @@
     else{
         //没有对应的县
         [self removeTitleAndTableViewCancel:2];
+    }
+ if (!isAddress) {
+        self.isChangeAddress = false;
     }
 }
 -(void)caseTownArr:(NSArray *)countyArr withSelectedID:(NSString *)selectedID{
