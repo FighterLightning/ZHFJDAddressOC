@@ -482,7 +482,7 @@
             //保证列表刷新之后才进行滚动处理
             dispatch_async(dispatch_get_main_queue(), ^{
                 NSLog(@"%ld",self.scroolToRow);
-                if ([tableView1 numberOfRowsInSection:0] >= self.scroolToRow){
+                if ([tableView1 numberOfRowsInSection:0] > self.scroolToRow){
                     [tableView1 scrollToRowAtIndexPath:[NSIndexPath indexPathForRow:self.scroolToRow  inSection:0 ] atScrollPosition: UITableViewScrollPositionBottom animated:false];
                 }
             });
