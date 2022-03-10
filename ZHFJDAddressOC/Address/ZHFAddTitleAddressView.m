@@ -301,22 +301,22 @@
     if (cell == nil) {
         cell = [[AddressCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:AddressAdministerCellIdentifier];
     }
-    if (tableView.tag == 0) {
+     if (tableView.tag == 0 && self.provinceMarr.count > indexPath.row) {
         ProvinceModel * provinceModel = self.provinceMarr[indexPath.row];
         cell.nameLabel.text = provinceModel.province_name;
         self.PCCTID = provinceModel.id;
     }
-    else if (tableView.tag == 1) {
+    else if (tableView.tag == 1  && self.cityMarr.count > indexPath.row) {
         CityModel *cityModel = self.cityMarr[indexPath.row];
         cell.nameLabel.text= cityModel.city_name;
         self.PCCTID = cityModel.id;
     }
-    else if (tableView.tag == 2){
+    else if (tableView.tag == 2 && self.countyMarr.count > indexPath.row){
         CountyModel * countyModel  = self.countyMarr[indexPath.row];
         cell.nameLabel.text = countyModel.county_name;
         self.PCCTID = countyModel.id;
     }
-    else if (tableView.tag == 3){
+    else if (tableView.tag == 3 && self.townMarr.count > indexPath.row){
         TownModel * townModel  = self.townMarr[indexPath.row];
         cell.nameLabel.text = townModel.town_name;
         self.PCCTID = townModel.id;
